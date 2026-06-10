@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 import './App.css';
 
@@ -68,6 +68,82 @@ function App() {
 
                                                            'Iron Condor': { spotPrice: 100, sellStrike: 105, buyStrike: 110, premium: 2 },
 
+
+        const [licenseKey, setLicenseKey] = useState('');
+
+      const [activating, setActivating] = useState(false);
+
+      const [activationError, setActivationError] = useState('');
+
+      const [showActivation, setShowActivation] = useState(false);
+
+      useEffect(() => {
+
+              if (localStorage.getItem('opp_license_valid') === 'true') {
+
+                        setIsPro(true);
+
+              }
+
+      }, []);
+
+      const activateLicense = async () => {
+
+              if (!licenseKey.trim()) return;
+
+              setActivating(true);
+
+              setActivationError('');
+
+              try {
+
+                        const res = await fetch('https://api.lemonsqueezy.com/v1/licenses/activate', {
+
+                                    method: 'POST',
+
+                                    headers: {
+
+                                                  'Accept': 'application/json',
+
+                                                  'Content-Type': 'application/x-www-form-urlencoded',
+
+                                    },
+
+                                    body: new URLSearchParams({
+
+                                                  license_key: licenseKey.trim(),
+
+                                                  instance_name: 'optionpayoff-web',
+
+                                    }),
+
+                        });
+
+                        const data = await res.json();
+
+                        if (data.activated || data.valid) {
+
+                                    setIsPro(true);
+
+                                    localStorage.setItem('opp_license_valid', 'true');
+
+                                    setShowActivation(false);
+
+                        } else {
+
+                                    setActivationError('Invalid license key. Check your email receipt from Lemon Squeezy.');
+
+                        }
+
+              } catch {
+
+                        setActivationError('Connection error. Please try again.');
+
+              }
+
+              setActivating(false);
+
+      };
         'Covered Call': { spotPrice: 100, strikePrice: 105, premium: 3 },
 
         'Cash-Secured Put': { spotPrice: 100, strikePrice: 95, premium: 2.5 },
@@ -302,7 +378,8 @@ function App() {
                         
                       >
                       
-                                🚀 Upgrade to Pro - $9/mês
+                                373
+                          - $9/mês
                       
                       </button>button>
               
