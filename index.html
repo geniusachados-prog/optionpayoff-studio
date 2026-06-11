@@ -222,12 +222,11 @@
       <div class="subtitle">Interactive Options Strategy Visualizer</div>
     </div>
     <div class="header-buttons">
-      <span id="proBadge" class="pro-badge">✓ PRO ACTIVE</span>
+      <span id="proBadge" class="pro-badge">&#10003; PRO ACTIVE</span>
       <button id="btnActivate" class="btn-activate">Already Pro? Activate</button>
-      <button id="btnUpgrade" class="btn-upgrade">🚀 Upgrade to Pro — $9/mo</button>
+      <button id="btnUpgrade" class="btn-upgrade">&#128640; Upgrade to Pro &mdash; $9/mo</button>
     </div>
   </header>
-
   <main>
     <div id="activationPanel" class="activation-panel">
       <h3>Activate Pro License</h3>
@@ -236,47 +235,40 @@
       <div id="activationError" class="activation-error"></div>
       <button id="btnDoActivate">Activate License</button>
     </div>
-
     <div class="container">
       <section>
         <h2>Select Strategy</h2>
         <div id="strategyGrid" class="strategy-grid"></div>
       </section>
-
       <div id="upgradePrompt" class="upgrade-prompt">
-        <h3>🔒 Pro Feature Locked</h3>
+        <h3>&#128274; Pro Feature Locked</h3>
         <p id="upgradePromptText">Unlock this strategy and 6 more with Pro.</p>
-        <button class="btn-upgrade-large" onclick="openCheckout()">Upgrade Now — Only $9/mo</button>
+        <button class="btn-upgrade-large" onclick="openCheckout()">Upgrade Now &mdash; Only $9/mo</button>
       </div>
-
       <section id="inputsSection">
         <h2>Strategy Parameters</h2>
         <div id="inputsGrid" class="inputs-grid"></div>
       </section>
-
       <section id="chartSection">
         <h2>Payoff Diagram</h2>
         <div class="chart-wrap">
           <svg id="chart" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg"></svg>
         </div>
         <div class="stats">
-          <div class="stat"><span>Max Profit</span><strong id="maxProfit">—</strong></div>
-          <div class="stat"><span>Max Loss</span><strong id="maxLoss">—</strong></div>
+          <div class="stat"><span>Max Profit</span><strong id="maxProfit">&mdash;</strong></div>
+          <div class="stat"><span>Max Loss</span><strong id="maxLoss">&mdash;</strong></div>
         </div>
       </section>
     </div>
   </main>
-
   <footer>
-    <p>OptionPayoff Studio • Options Strategy Visualizer</p>
-    <p style="margin-top:6px;opacity:.8">Free: Iron Condor, Covered Call, Cash-Secured Put • Upgrade to unlock 7 more</p>
+    <p>OptionPayoff Studio &bull; Options Strategy Visualizer</p>
+    <p style="margin-top:6px;opacity:.8">Free: Iron Condor, Covered Call, Cash-Secured Put &bull; Upgrade to unlock 7 more</p>
     <p style="margin-top:6px;opacity:.6;font-size:11px">Educational tool only. Not investment advice.</p>
   </footer>
-
 <script>
 const CHECKOUT_LINK = 'https://optionpayoffstudio.lemonsqueezy.com/checkout/buy/28e58903-db2f-4873-aa0e-ccdd0bb82f2f';
 const FREE = ['Iron Condor', 'Covered Call', 'Cash-Secured Put'];
-
 const STRATEGIES = {
   'Iron Condor': {
     params: { putLong: ['Long Put Strike', 90], putShort: ['Short Put Strike', 95], callShort: ['Short Call Strike', 105], callLong: ['Long Call Strike', 110], credit: ['Net Credit', 2] },
@@ -319,18 +311,14 @@ const STRATEGIES = {
     payoff: (p, v) => (p - v.entry) + Math.max(v.putK - p, 0) - Math.max(p - v.callK, 0) - v.netCost
   }
 };
-
 let isPro = localStorage.getItem('opp_license_valid') === 'true';
 let selected = 'Iron Condor';
 let values = {};
-
 function openCheckout() { window.open(CHECKOUT_LINK, '_blank'); }
-
 function initValues(name) {
   values = {};
   Object.entries(STRATEGIES[name].params).forEach(([k, [, def]]) => values[k] = def);
 }
-
 function renderGrid() {
   const grid = document.getElementById('strategyGrid');
   grid.innerHTML = '';
@@ -339,12 +327,11 @@ function renderGrid() {
     const locked = !free && !isPro;
     const card = document.createElement('div');
     card.className = 'strategy-card' + (name === selected ? ' active' : '') + (locked ? ' locked' : '');
-    card.innerHTML = `<span>${name}</span>` + (locked ? '<span>🔒</span>' : (free && !isPro ? '<span class="free-badge">FREE</span>' : ''));
+    card.innerHTML = '<span>' + name + '</span>' + (locked ? '<span>&#128274;</span>' : (free && !isPro ? '<span class="free-badge">FREE</span>' : ''));
     card.onclick = () => selectStrategy(name);
     grid.appendChild(card);
   });
 }
-
 function selectStrategy(name) {
   selected = name;
   const locked = !FREE.includes(name) && !isPro;
@@ -352,7 +339,7 @@ function selectStrategy(name) {
   document.getElementById('inputsSection').style.display = locked ? 'none' : 'block';
   document.getElementById('chartSection').style.display = locked ? 'none' : 'block';
   if (locked) {
-    document.getElementById('upgradePromptText').textContent = `Unlock "${name}" and 6 more professional strategies with Pro.`;
+    document.getElementById('upgradePromptText').textContent = 'Unlock "' + name + '" and 6 more professional strategies with Pro.';
   } else {
     initValues(name);
     renderInputs();
@@ -360,14 +347,13 @@ function selectStrategy(name) {
   }
   renderGrid();
 }
-
 function renderInputs() {
   const grid = document.getElementById('inputsGrid');
   grid.innerHTML = '';
   Object.entries(STRATEGIES[selected].params).forEach(([key, [label]]) => {
     const div = document.createElement('div');
     div.className = 'input-group';
-    div.innerHTML = `<label>${label}</label>`;
+    div.innerHTML = '<label>' + label + '</label>';
     const input = document.createElement('input');
     input.type = 'number';
     input.step = '0.5';
@@ -380,56 +366,64 @@ function renderInputs() {
     grid.appendChild(div);
   });
 }
-
+function getPriceRange() {
+  const nums = Object.values(values).filter(v => v > 0);
+  if (!nums.length) return { min: 50, max: 150 };
+  const center = nums.reduce((a, b) => a + b, 0) / nums.length;
+  const spread = Math.max(center * 0.30, 20);
+  return {
+    min: Math.max(0, Math.floor(center - spread)),
+    max: Math.ceil(center + spread)
+  };
+}
 function renderChart() {
   const svg = document.getElementById('chart');
   const fn = STRATEGIES[selected].payoff;
+  const { min: pMin, max: pMax } = getPriceRange();
+  const steps = 100;
+  const step = (pMax - pMin) / steps;
   const pts = [];
-  for (let p = 50; p <= 150; p += 1) pts.push({ p, y: fn(p, values) });
+  for (let i = 0; i <= steps; i++) {
+    const p = pMin + i * step;
+    pts.push({ p, y: fn(p, values) });
+  }
   const ys = pts.map(d => d.y);
   let maxY = Math.max(...ys), minY = Math.min(...ys);
   if (maxY === minY) { maxY += 1; minY -= 1; }
-  const pad = (maxY - minY) * 0.1;
+  const pad = (maxY - minY) * 0.12;
   maxY += pad; minY -= pad;
-
-  const X = p => 60 + ((p - 50) / 100) * 700;
+  const X = p => 60 + ((p - pMin) / (pMax - pMin)) * 700;
   const Y = y => 370 - ((y - minY) / (maxY - minY)) * 330;
-
   let s = '';
-  // grid
   for (let i = 0; i <= 10; i++) {
     const gx = 60 + i * 70;
-    s += `<line x1="${gx}" y1="40" x2="${gx}" y2="370" stroke="#e5e7eb" stroke-width="1"/>`;
-    s += `<text x="${gx}" y="390" text-anchor="middle" font-size="11" fill="#888">${50 + i * 10}</text>`;
+    const priceLabel = (pMin + (i / 10) * (pMax - pMin)).toFixed(0);
+    s += '<line x1="' + gx + '" y1="40" x2="' + gx + '" y2="370" stroke="#e5e7eb" stroke-width="1"/>';
+    s += '<text x="' + gx + '" y="390" text-anchor="middle" font-size="11" fill="#888">' + priceLabel + '</text>';
   }
   for (let i = 0; i <= 5; i++) {
     const gy = 40 + i * 66;
     const val = (maxY - (i / 5) * (maxY - minY)).toFixed(0);
-    s += `<line x1="60" y1="${gy}" x2="760" y2="${gy}" stroke="#e5e7eb" stroke-width="1"/>`;
-    s += `<text x="50" y="${gy + 4}" text-anchor="end" font-size="11" fill="#888">${val}</text>`;
+    s += '<line x1="60" y1="' + gy + '" x2="760" y2="' + gy + '" stroke="#e5e7eb" stroke-width="1"/>';
+    s += '<text x="50" y="' + (gy + 4) + '" text-anchor="end" font-size="11" fill="#888">' + val + '</text>';
   }
-  // zero line
   if (minY < 0 && maxY > 0) {
-    s += `<line x1="60" y1="${Y(0)}" x2="760" y2="${Y(0)}" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,4"/>`;
+    s += '<line x1="60" y1="' + Y(0) + '" x2="760" y2="' + Y(0) + '" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,4"/>';
   }
-  // profit/loss areas via line
-  const line = pts.map(d => `${X(d.p)},${Y(d.y)}`).join(' ');
-  s += `<polyline points="${line}" fill="none" stroke="#6366f1" stroke-width="3"/>`;
-  s += `<text x="410" y="415" text-anchor="middle" font-size="12" fill="#666">Underlying Price at Expiration ($)</text>`;
+  const line = pts.map(d => X(d.p) + ',' + Y(d.y)).join(' ');
+  s += '<polyline points="' + line + '" fill="none" stroke="#6366f1" stroke-width="3"/>';
+  s += '<text x="410" y="415" text-anchor="middle" font-size="12" fill="#666">Underlying Price at Expiration ($)</text>';
   svg.innerHTML = s;
-
   const realMax = Math.max(...ys), realMin = Math.min(...ys);
   document.getElementById('maxProfit').textContent = realMax >= 999 ? 'Unlimited' : '$' + realMax.toFixed(2);
   document.getElementById('maxLoss').textContent = '$' + realMin.toFixed(2);
 }
-
 function updateProUI() {
   document.getElementById('proBadge').style.display = isPro ? 'inline-block' : 'none';
   document.getElementById('btnActivate').style.display = isPro ? 'none' : 'inline-block';
   document.getElementById('btnUpgrade').style.display = isPro ? 'none' : 'inline-block';
   renderGrid();
 }
-
 document.getElementById('btnUpgrade').onclick = openCheckout;
 document.getElementById('btnActivate').onclick = () => {
   const panel = document.getElementById('activationPanel');
@@ -467,8 +461,6 @@ document.getElementById('btnDoActivate').onclick = async () => {
   btn.textContent = 'Activate License';
   btn.disabled = false;
 };
-
-// init
 initValues(selected);
 updateProUI();
 selectStrategy(selected);
