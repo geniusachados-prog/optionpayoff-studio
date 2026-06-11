@@ -1,13 +1,477 @@
 <!doctype html>
 <html lang="en">
-  <head>
-      <meta charset="UTF-8" />
-          <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                  <title>OptionPayoff Studio</title>
-                    </head>
-                      <body>
-                          <div id="root"></div>
-                              <script type="module" src="/src/main.tsx"></script>
-                                </body>
-                                </html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OptionPayoff Studio — Options Strategy Payoff Visualizer</title>
+  <meta name="description" content="Free interactive options strategy payoff calculator. Visualize Iron Condor, Covered Call, Straddle and more before you trade." />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: white;
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 { font-size: 24px; color: #333; }
+    header .subtitle { font-size: 13px; color: #666; }
+    .header-buttons { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn-upgrade {
+      padding: 12px 22px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all .25s;
+    }
+    .btn-upgrade:hover { background: #4f46e5; transform: translateY(-2px); }
+    .btn-activate {
+      padding: 10px 16px;
+      background: none;
+      border: 1px solid #6366f1;
+      color: #6366f1;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .pro-badge {
+      background: #10b981;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+    main { flex: 1; padding: 32px 16px; }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.15);
+    }
+    section { margin-bottom: 32px; }
+    h2 {
+      font-size: 20px;
+      color: #333;
+      border-bottom: 2px solid #6366f1;
+      padding-bottom: 8px;
+      margin-bottom: 18px;
+    }
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+    .strategy-card {
+      padding: 14px 10px;
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      transition: all .2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-height: 72px;
+      justify-content: center;
+    }
+    .strategy-card:hover:not(.locked) { border-color: #6366f1; background: #f0f4ff; }
+    .strategy-card.active { background: #6366f1; border-color: #6366f1; color: white; }
+    .strategy-card.locked { opacity: .55; cursor: not-allowed; }
+    .free-badge {
+      font-size: 10px;
+      background: #10b981;
+      color: white;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .upgrade-prompt {
+      background: linear-gradient(135deg, #fef3c7, #fed7aa);
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      padding: 28px;
+      text-align: center;
+      display: none;
+    }
+    .upgrade-prompt h3 { color: #92400e; margin-bottom: 10px; }
+    .upgrade-prompt p { color: #78350f; font-size: 14px; margin-bottom: 16px; }
+    .btn-upgrade-large {
+      padding: 14px 30px;
+      background: #d97706;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .input-group { display: flex; flex-direction: column; }
+    .input-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px;
+    }
+    .input-group input {
+      padding: 10px;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .input-group input:focus { outline: none; border-color: #6366f1; background: #f0f4ff; }
+    .chart-wrap {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    svg { width: 100%; height: auto; display: block; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stat {
+      background: #f0f4ff;
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: #555;
+    }
+    .stat strong { color: #6366f1; font-size: 17px; }
+    .activation-panel {
+      max-width: 480px;
+      margin: 0 auto 20px;
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      display: none;
+    }
+    .activation-panel h3 { margin-bottom: 10px; color: #333; }
+    .activation-panel p { font-size: 13px; color: #666; margin-bottom: 10px; }
+    .activation-panel input {
+      width: 100%;
+      padding: 11px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .activation-error { color: #dc2626; font-size: 13px; margin-bottom: 10px; display: none; }
+    .activation-panel button {
+      width: 100%;
+      padding: 12px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    footer {
+      background: rgba(0,0,0,.12);
+      color: white;
+      text-align: center;
+      padding: 24px 16px;
+      font-size: 13px;
+    }
+    @media (max-width: 600px) {
+      header { padding: 14px 16px; }
+      header h1 { font-size: 19px; }
+      .container { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>OptionPayoff Studio</h1>
+      <div class="subtitle">Interactive Options Strategy Visualizer</div>
+    </div>
+    <div class="header-buttons">
+      <span id="proBadge" class="pro-badge">✓ PRO ACTIVE</span>
+      <button id="btnActivate" class="btn-activate">Already Pro? Activate</button>
+      <button id="btnUpgrade" class="btn-upgrade">🚀 Upgrade to Pro — $9/mo</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="activationPanel" class="activation-panel">
+      <h3>Activate Pro License</h3>
+      <p>Paste the license key from your Lemon Squeezy email receipt.</p>
+      <input id="licenseInput" type="text" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" />
+      <div id="activationError" class="activation-error"></div>
+      <button id="btnDoActivate">Activate License</button>
+    </div>
+
+    <div class="container">
+      <section>
+        <h2>Select Strategy</h2>
+        <div id="strategyGrid" class="strategy-grid"></div>
+      </section>
+
+      <div id="upgradePrompt" class="upgrade-prompt">
+        <h3>🔒 Pro Feature Locked</h3>
+        <p id="upgradePromptText">Unlock this strategy and 6 more with Pro.</p>
+        <button class="btn-upgrade-large" onclick="openCheckout()">Upgrade Now — Only $9/mo</button>
+      </div>
+
+      <section id="inputsSection">
+        <h2>Strategy Parameters</h2>
+        <div id="inputsGrid" class="inputs-grid"></div>
+      </section>
+
+      <section id="chartSection">
+        <h2>Payoff Diagram</h2>
+        <div class="chart-wrap">
+          <svg id="chart" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="stats">
+          <div class="stat"><span>Max Profit</span><strong id="maxProfit">—</strong></div>
+          <div class="stat"><span>Max Loss</span><strong id="maxLoss">—</strong></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>OptionPayoff Studio • Options Strategy Visualizer</p>
+    <p style="margin-top:6px;opacity:.8">Free: Iron Condor, Covered Call, Cash-Secured Put • Upgrade to unlock 7 more</p>
+    <p style="margin-top:6px;opacity:.6;font-size:11px">Educational tool only. Not investment advice.</p>
+  </footer>
+
+<script>
+const CHECKOUT_LINK = 'https://optionpayoffstudio.lemonsqueezy.com/checkout/buy/28e58903-db2f-4873-aa0e-ccdd0bb82f2f';
+const FREE = ['Iron Condor', 'Covered Call', 'Cash-Secured Put'];
+
+const STRATEGIES = {
+  'Iron Condor': {
+    params: { putLong: ['Long Put Strike', 90], putShort: ['Short Put Strike', 95], callShort: ['Short Call Strike', 105], callLong: ['Long Call Strike', 110], credit: ['Net Credit', 2] },
+    payoff: (p, v) => v.credit - (Math.max(p - v.callShort, 0) - Math.max(p - v.callLong, 0)) - (Math.max(v.putShort - p, 0) - Math.max(v.putLong - p, 0))
+  },
+  'Covered Call': {
+    params: { entry: ['Stock Entry Price', 100], strike: ['Call Strike', 105], premium: ['Call Premium', 3] },
+    payoff: (p, v) => (p - v.entry) + v.premium - Math.max(p - v.strike, 0)
+  },
+  'Cash-Secured Put': {
+    params: { strike: ['Put Strike', 95], premium: ['Put Premium', 2.5] },
+    payoff: (p, v) => v.premium - Math.max(v.strike - p, 0)
+  },
+  'Long Call': {
+    params: { strike: ['Strike Price', 105], premium: ['Premium Paid', 3] },
+    payoff: (p, v) => Math.max(p - v.strike, 0) - v.premium
+  },
+  'Long Put': {
+    params: { strike: ['Strike Price', 95], premium: ['Premium Paid', 2] },
+    payoff: (p, v) => Math.max(v.strike - p, 0) - v.premium
+  },
+  'Bull Call Spread': {
+    params: { longK: ['Long Call Strike', 100], shortK: ['Short Call Strike', 110], debit: ['Net Debit', 3] },
+    payoff: (p, v) => Math.max(p - v.longK, 0) - Math.max(p - v.shortK, 0) - v.debit
+  },
+  'Bear Put Spread': {
+    params: { longK: ['Long Put Strike', 105], shortK: ['Short Put Strike', 95], debit: ['Net Debit', 3] },
+    payoff: (p, v) => Math.max(v.longK - p, 0) - Math.max(v.shortK - p, 0) - v.debit
+  },
+  'Strangle': {
+    params: { callK: ['Call Strike', 105], putK: ['Put Strike', 95], premium: ['Total Premium', 4] },
+    payoff: (p, v) => Math.max(p - v.callK, 0) + Math.max(v.putK - p, 0) - v.premium
+  },
+  'Straddle': {
+    params: { strike: ['Strike Price', 100], premium: ['Total Premium', 6] },
+    payoff: (p, v) => Math.max(p - v.strike, 0) + Math.max(v.strike - p, 0) - v.premium
+  },
+  'Collar': {
+    params: { entry: ['Stock Entry Price', 100], putK: ['Put Strike', 95], callK: ['Call Strike', 105], netCost: ['Net Option Cost', 1] },
+    payoff: (p, v) => (p - v.entry) + Math.max(v.putK - p, 0) - Math.max(p - v.callK, 0) - v.netCost
+  }
+};
+
+let isPro = localStorage.getItem('opp_license_valid') === 'true';
+let selected = 'Iron Condor';
+let values = {};
+
+function openCheckout() { window.open(CHECKOUT_LINK, '_blank'); }
+
+function initValues(name) {
+  values = {};
+  Object.entries(STRATEGIES[name].params).forEach(([k, [, def]]) => values[k] = def);
+}
+
+function renderGrid() {
+  const grid = document.getElementById('strategyGrid');
+  grid.innerHTML = '';
+  Object.keys(STRATEGIES).forEach(name => {
+    const free = FREE.includes(name);
+    const locked = !free && !isPro;
+    const card = document.createElement('div');
+    card.className = 'strategy-card' + (name === selected ? ' active' : '') + (locked ? ' locked' : '');
+    card.innerHTML = `<span>${name}</span>` + (locked ? '<span>🔒</span>' : (free && !isPro ? '<span class="free-badge">FREE</span>' : ''));
+    card.onclick = () => selectStrategy(name);
+    grid.appendChild(card);
+  });
+}
+
+function selectStrategy(name) {
+  selected = name;
+  const locked = !FREE.includes(name) && !isPro;
+  document.getElementById('upgradePrompt').style.display = locked ? 'block' : 'none';
+  document.getElementById('inputsSection').style.display = locked ? 'none' : 'block';
+  document.getElementById('chartSection').style.display = locked ? 'none' : 'block';
+  if (locked) {
+    document.getElementById('upgradePromptText').textContent = `Unlock "${name}" and 6 more professional strategies with Pro.`;
+  } else {
+    initValues(name);
+    renderInputs();
+    renderChart();
+  }
+  renderGrid();
+}
+
+function renderInputs() {
+  const grid = document.getElementById('inputsGrid');
+  grid.innerHTML = '';
+  Object.entries(STRATEGIES[selected].params).forEach(([key, [label]]) => {
+    const div = document.createElement('div');
+    div.className = 'input-group';
+    div.innerHTML = `<label>${label}</label>`;
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.step = '0.5';
+    input.value = values[key];
+    input.oninput = () => {
+      const n = parseFloat(input.value);
+      if (!isNaN(n)) { values[key] = n; renderChart(); }
+    };
+    div.appendChild(input);
+    grid.appendChild(div);
+  });
+}
+
+function renderChart() {
+  const svg = document.getElementById('chart');
+  const fn = STRATEGIES[selected].payoff;
+  const pts = [];
+  for (let p = 50; p <= 150; p += 1) pts.push({ p, y: fn(p, values) });
+  const ys = pts.map(d => d.y);
+  let maxY = Math.max(...ys), minY = Math.min(...ys);
+  if (maxY === minY) { maxY += 1; minY -= 1; }
+  const pad = (maxY - minY) * 0.1;
+  maxY += pad; minY -= pad;
+
+  const X = p => 60 + ((p - 50) / 100) * 700;
+  const Y = y => 370 - ((y - minY) / (maxY - minY)) * 330;
+
+  let s = '';
+  // grid
+  for (let i = 0; i <= 10; i++) {
+    const gx = 60 + i * 70;
+    s += `<line x1="${gx}" y1="40" x2="${gx}" y2="370" stroke="#e5e7eb" stroke-width="1"/>`;
+    s += `<text x="${gx}" y="390" text-anchor="middle" font-size="11" fill="#888">${50 + i * 10}</text>`;
+  }
+  for (let i = 0; i <= 5; i++) {
+    const gy = 40 + i * 66;
+    const val = (maxY - (i / 5) * (maxY - minY)).toFixed(0);
+    s += `<line x1="60" y1="${gy}" x2="760" y2="${gy}" stroke="#e5e7eb" stroke-width="1"/>`;
+    s += `<text x="50" y="${gy + 4}" text-anchor="end" font-size="11" fill="#888">${val}</text>`;
+  }
+  // zero line
+  if (minY < 0 && maxY > 0) {
+    s += `<line x1="60" y1="${Y(0)}" x2="760" y2="${Y(0)}" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,4"/>`;
+  }
+  // profit/loss areas via line
+  const line = pts.map(d => `${X(d.p)},${Y(d.y)}`).join(' ');
+  s += `<polyline points="${line}" fill="none" stroke="#6366f1" stroke-width="3"/>`;
+  s += `<text x="410" y="415" text-anchor="middle" font-size="12" fill="#666">Underlying Price at Expiration ($)</text>`;
+  svg.innerHTML = s;
+
+  const realMax = Math.max(...ys), realMin = Math.min(...ys);
+  document.getElementById('maxProfit').textContent = realMax >= 999 ? 'Unlimited' : '$' + realMax.toFixed(2);
+  document.getElementById('maxLoss').textContent = '$' + realMin.toFixed(2);
+}
+
+function updateProUI() {
+  document.getElementById('proBadge').style.display = isPro ? 'inline-block' : 'none';
+  document.getElementById('btnActivate').style.display = isPro ? 'none' : 'inline-block';
+  document.getElementById('btnUpgrade').style.display = isPro ? 'none' : 'inline-block';
+  renderGrid();
+}
+
+document.getElementById('btnUpgrade').onclick = openCheckout;
+document.getElementById('btnActivate').onclick = () => {
+  const panel = document.getElementById('activationPanel');
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+};
+document.getElementById('btnDoActivate').onclick = async () => {
+  const key = document.getElementById('licenseInput').value.trim();
+  const err = document.getElementById('activationError');
+  const btn = document.getElementById('btnDoActivate');
+  if (!key) return;
+  err.style.display = 'none';
+  btn.textContent = 'Activating...';
+  btn.disabled = true;
+  try {
+    const res = await fetch('https://api.lemonsqueezy.com/v1/licenses/activate', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ license_key: key, instance_name: 'optionpayoff-web' })
+    });
+    const data = await res.json();
+    if (data.activated || data.valid) {
+      isPro = true;
+      localStorage.setItem('opp_license_valid', 'true');
+      document.getElementById('activationPanel').style.display = 'none';
+      updateProUI();
+      selectStrategy(selected);
+    } else {
+      err.textContent = (data.error) ? data.error : 'Invalid license key. Check your email receipt.';
+      err.style.display = 'block';
+    }
+  } catch (e) {
+    err.textContent = 'Connection error. Please try again.';
+    err.style.display = 'block';
+  }
+  btn.textContent = 'Activate License';
+  btn.disabled = false;
+};
+
+// init
+initValues(selected);
+updateProUI();
+selectStrategy(selected);
+</script>
+</body>
+</html>
