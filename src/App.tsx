@@ -370,17 +370,28 @@ function App() {
                       
                       </div>div>
               
-                      <button
-                        
-                                  onClick={() => window.open(CHECKOUT_LINK, '_blank')}
-                        
-                        className="upgrade-button"
-                        
-                      >
-                      
-                                373
-                          - $9/mês
-                      
+<button
+                  onClick={() => window.open(CHECKOUT_LINK, '_blank')}
+                  className="upgrade-button"
+                >
+              🚀 Upgrade to Pro - $9/mês
+</button>button>
+                  {isPro && (
+                  <button
+                                      onClick={() => setShowActivation(!showActivation)}
+                                      className="activate-button"
+                                    >
+                                  ✓ Pro Active
+                  </button>button>
+                          )}
+                  {!isPro && (
+                  <button
+                                      onClick={() => setShowActivation(!showActivation)}
+                                      className="activate-button"
+                                    >
+                                  Already Pro? Activate
+                  </button>button>
+                          )}</button>
                       </button>button>
               
               </header>header>
@@ -388,6 +399,32 @@ function App() {
           {/* Main Content */}
         
               <main className="app-main">
+                  {showActivation && !isPro && (
+                          <div className="license-activation-panel">
+                                    <h3>Activate Pro License</h3>h3>
+                                    <input
+                                                    type="text"
+                                                    placeholder="Enter your license key"
+                                                    value={licenseKey}
+                                                    onChange={(e) => setLicenseKey(e.target.value)}
+                                                    className="license-input"
+                                                  />
+                                    <button
+                                                    onClick={activateLicense}
+                                                    disabled={activating || !licenseKey}
+                                                    className="activate-button"
+                                                  >
+                                        {activating ? 'Activating...' : 'Activate License'}
+                                    </button>button>
+                              {activationError && <p className="error">{activationError}</p>p>}
+                                    <button
+                                                    onClick={() => setShowActivation(false)}
+                                                    className="close-button"
+                                                  >
+                                                Close
+                                    </button>button>
+                          </div>div>
+                    )}</div>
               
                       <div className="container">
                       
