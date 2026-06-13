@@ -230,7 +230,7 @@
   <main>
     <div id="activationPanel" class="activation-panel">
       <h3>Activate Pro License</h3>
-      <p>Paste the license key from your Lemon Squeezy email receipt.</p>
+      <p>Paste the license key from your Gumroad email receipt.</p>
       <input id="licenseInput" type="text" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" />
       <div id="activationError" class="activation-error"></div>
       <button id="btnDoActivate">Activate License</button>
@@ -463,20 +463,20 @@ document.getElementById('btnDoActivate').onclick = async () => {
   btn.textContent = 'Activating...';
   btn.disabled = true;
   try {
-    const res = await fetch('https://api.lemonsqueezy.com/v1/licenses/activate', {
+    const res = await fetch('https://api.gumroad.com/v2/licenses/verify', {
       method: 'POST',
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ license_key: key, instance_name: 'optionpayoff-web' })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ product_id: 'jgtjpg', license_key: key })
     });
     const data = await res.json();
-    if (data.activated || data.valid) {
+    if (data.success) {
       isPro = true;
       localStorage.setItem('opp_license_valid', 'true');
       document.getElementById('activationPanel').style.display = 'none';
       updateProUI();
       selectStrategy(selected);
     } else {
-      err.textContent = (data.error) ? data.error : 'Invalid license key. Check your email receipt.';
+      err.textContent = (data.message) ? data.message : 'Invalid license key. Check your Gumroad email receipt.';
       err.style.display = 'block';
     }
   } catch (e) {
