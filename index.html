@@ -475,7 +475,7 @@ document.getElementById('btnDoActivate').onclick = async () => {
     const res = await fetch('https://api.gumroad.com/v2/licenses/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ product_id: 'jgtjpg', license_key: key })
+      body: new URLSearchParams({ product_permalink: 'jgtjpg', license_key: key, increment_uses_count: 'false' })
     });
     const data = await res.json();
     if (data.success) {
