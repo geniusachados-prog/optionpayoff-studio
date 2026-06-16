@@ -700,6 +700,7 @@ function submitExitEmail() {
   }
   
   localStorage.setItem('exit_email_captured', 'true');
+        localStorage.setItem('exit_email', email);
   
   document.getElementById('exit-form-content').style.display = 'none';
   document.getElementById('exit-success').style.display = 'block';
