@@ -213,7 +213,139 @@
       header h1 { font-size: 19px; }
       .container { padding: 18px; }
     }
-  </style>
+  
+/* Exit Intent Popup */
+#exit-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+}
+#exit-overlay.active {
+  display: flex;
+}
+#exit-popup {
+  background: linear-gradient(135deg, #1e1b4b, #0f0f1a);
+  border: 1px solid #7c3aed;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: popupIn 0.3s ease;
+}
+@keyframes popupIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+#exit-popup .close-btn {
+  position: absolute;
+  top: 12px; right: 16px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+#exit-popup .close-btn:hover { color: #fff; }
+#exit-popup .emoji {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+#exit-popup h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #a78bfa;
+  margin-bottom: 8px;
+}
+#exit-popup .subtitle {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+#exit-popup .offer-box {
+  background: #2d1b69;
+  border: 1px solid #4c1d95;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+#exit-popup .offer-box p {
+  color: #c4b5fd;
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+#exit-popup .offer-box strong {
+  color: #fff;
+  font-size: 1.1rem;
+}
+#exit-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#exit-email-input {
+  background: #1e1b4b;
+  border: 1px solid #4c1d95;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+}
+#exit-email-input:focus {
+  border-color: #7c3aed;
+}
+#exit-email-input::placeholder {
+  color: #64748b;
+}
+#exit-submit-btn {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+#exit-submit-btn:hover { opacity: 0.9; }
+#exit-popup .no-thanks {
+  margin-top: 12px;
+  color: #64748b;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+#exit-popup .no-thanks:hover { color: #94a3b8; }
+#exit-success {
+  display: none;
+  text-align: center;
+}
+#exit-success .success-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+#exit-success h3 {
+  color: #a78bfa;
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+#exit-success p {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+</style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18135312856"></script>
 <script>
@@ -540,6 +672,120 @@ document.getElementById('btnDoActivate').onclick = async () => {
 updateProUI();
 selectStrategy(selected);
 })();
+
+
+// ============ EXIT INTENT ============
+let exitShown = false;
+let timeOnSite = 0;
+let timeTimer = setInterval(function() { timeOnSite++; }, 1000);
+
+function showExitPopup() {
+  if (exitShown) return;
+  if (localStorage.getItem('opp_license_valid') === 'true') return;
+  if (localStorage.getItem('exit_email_captured')) return;
+  exitShown = true;
+  document.getElementById('exit-overlay').classList.add('active');
+}
+
+function closeExitPopup() {
+  document.getElementById('exit-overlay').classList.remove('active');
+}
+
+function submitExitEmail() {
+  var email = document.getElementById('exit-email-input').value;
+  if (!email || !email.includes('@')) {
+    document.getElementById('exit-email-input').style.borderColor = '#ef4444';
+    document.getElementById('exit-email-input').placeholder = 'Please enter a valid email';
+    return;
+  }
+  
+  localStorage.setItem('exit_email_captured', 'true');
+  
+  document.getElementById('exit-form-content').style.display = 'none';
+  document.getElementById('exit-success').style.display = 'block';
+  
+  setTimeout(function() {
+    closeExitPopup();
+    window.open('https://achados63.gumroad.com/l/jgtjpg', '_blank');
+  }, 3000);
+}
+
+// Detect exit by mouse
+document.addEventListener('mouseleave', function(e) {
+  if (e.clientY <= 0 && timeOnSite >= 15) {
+    showExitPopup();
+  }
+});
+
+// Mobile detection (inactivity)
+var mobileTimer;
+function resetMobileTimer() {
+  clearTimeout(mobileTimer);
+  mobileTimer = setTimeout(function() {
+    if (timeOnSite >= 30) showExitPopup();
+  }, 30000);
+}
+document.addEventListener('touchstart', resetMobileTimer);
+document.addEventListener('scroll', resetMobileTimer);
+resetMobileTimer();
+
+// Close on backdrop click
+document.getElementById('exit-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeExitPopup();
+});
+// ============ END EXIT INTENT ============
 </script>
+
+
+<!-- Exit Intent Popup -->
+<div id="exit-overlay">
+  <div id="exit-popup">
+    <button class="close-btn" onclick="closeExitPopup()">&#215;</button>
+    
+    <div id="exit-form-content">
+      <div class="emoji">&#127873;</div>
+      <h2>Wait! Don't leave yet.</h2>
+      <p class="subtitle">
+        Get <strong style="color:#a78bfa">7 days FREE</strong> 
+        access to all Pro strategies before you decide.
+      </p>
+      
+      <div class="offer-box">
+        <p>&#10003; Long Call &amp; Long Put</p>
+        <p>&#10003; Bull Call &amp; Bear Put Spreads</p>
+        <p>&#10003; Strangle, Straddle &amp; Collar</p>
+        <p style="margin-top:8px">
+          <strong>$0 for 7 days. No credit card required.</strong>
+        </p>
+      </div>
+      
+      <div id="exit-email-form">
+        <input 
+          type="email" 
+          id="exit-email-input" 
+          placeholder="Enter your email address"
+          onkeypress="if(event.key==='Enter')submitExitEmail()"
+        />
+        <button id="exit-submit-btn" onclick="submitExitEmail()">
+          &#128640; Start My Free 7-Day Trial
+        </button>
+      </div>
+      
+      <p class="no-thanks" onclick="closeExitPopup()">
+        No thanks, I don't want free access
+      </p>
+    </div>
+    
+    <div id="exit-success">
+      <div class="success-icon">&#9989;</div>
+      <h3>Check your email!</h3>
+      <p>
+        We sent your free trial link to your inbox.<br>
+        Check spam if you don't see it in 2 minutes.<br><br>
+        <strong style="color:#a78bfa">Enjoy all Pro strategies free for 7 days!</strong>
+      </p>
+    </div>
+  </div>
+</div>
 </body>
 </html>
