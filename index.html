@@ -320,7 +320,46 @@ const STRATEGIES = {
     payoff: (p, v) => (p - v.entry) + Math.max(v.putK - p, 0) - Math.max(p - v.callK, 0) - v.netCost
   }
 };
-let isPro = localStorage.getItem('opp_license_valid') === 'true';
+let isPro = false;
+      async function verifyStoredLicense() {
+              const isValid = localStorage.getItem('opp_license_valid');
+              const storedKey = localStorage.getItem('opp_license_key');
+
+              if (!isValid || !storedKey) {
+                        localStorage.removeItem('opp_license_valid');
+                        localStorage.removeItem('opp_license_key');
+                        return false;
+              }
+
+              try {
+                        const response = await fetch(
+                                    'https://api.gumroad.com/v2/licenses/verify',
+                          {
+                                        method: 'POST',
+                                        headers: {
+                                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                        },
+                                        body: new URLSearchParams({
+                                                        product_permalink: 'jgtjpg',
+                                                        license_key: storedKey,
+                                                        increment_uses_count: 'false'
+                                        })
+                          }
+                                  );
+
+                        const data = await response.json();
+
+                        if (data.success === true) {
+                                    return true;
+                        } else {
+                                    localStorage.removeItem('opp_license_valid');
+                                    localStorage.removeItem('opp_license_key');
+                                    return false;
+                        }
+              } catch (error) {
+                        return true;
+              }
+      }
 let selected = 'Iron Condor';
 let values = {};
 function openCheckout() { window.open(CHECKOUT_LINK, '_blank'); }
@@ -480,7 +519,7 @@ document.getElementById('btnDoActivate').onclick = async () => {
     const data = await res.json();
     if (data.success) {
       isPro = true;
-      localStorage.setItem('opp_license_valid', 'true');
+      localStorage.setItem('opp_license_valid', 'true');            localStorage.setItem('opp_license_key', key);
       document.getElementById('activationPanel').style.display = 'none';
       updateProUI();
       selectStrategy(selected);
@@ -495,9 +534,12 @@ document.getElementById('btnDoActivate').onclick = async () => {
   btn.textContent = 'Activate License';
   btn.disabled = false;
 };
-initValues(selected);
+(async () => {
+    isPro = await verifyStoredLicense();
+  initValues(selected);
 updateProUI();
 selectStrategy(selected);
+})();
 </script>
 </body>
 </html>
