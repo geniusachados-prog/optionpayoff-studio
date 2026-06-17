@@ -857,6 +857,85 @@ document.getElementById('exit-overlay').addEventListener('click', function(e) {
 });
 // ============ END EXIT INTENT ============
 
+
+
+</script>
+
+
+<!-- Exit Intent Popup -->
+<div id="exit-overlay">
+  <div id="exit-popup">
+    <button class="close-btn" onclick="closeExitPopup()">&#215;</button>
+    
+    <div id="exit-form-content">
+      <div class="emoji">&#127873;</div>
+      <h2>Wait! Don't leave yet.</h2>
+      <p class="subtitle">
+        Get <strong style="color:#a78bfa">7 days FREE</strong> 
+        access to all Pro strategies before you decide.
+      </p>
+      
+      <div class="offer-box">
+        <p>&#10003; Long Call &amp; Long Put</p>
+        <p>&#10003; Bull Call &amp; Bear Put Spreads</p>
+        <p>&#10003; Strangle, Straddle &amp; Collar</p>
+        <p style="margin-top:8px">
+          <strong>$0 for 7 days. No credit card required.</strong>
+        </p>
+      </div>
+      
+      <div id="exit-email-form">
+        <input 
+          type="email" 
+          id="exit-email-input" 
+          placeholder="Enter your email address"
+          onkeypress="if(event.key==='Enter')submitExitEmail()"
+        />
+        <button id="exit-submit-btn" onclick="submitExitEmail()">
+          &#128640; Start My Free 7-Day Trial
+        </button>
+      </div>
+      
+      <p class="no-thanks" onclick="closeExitPopup()">
+        No thanks, I don't want free access
+      </p>
+    </div>
+    
+    <div id="exit-success">
+      <div class="success-icon">&#9989;</div>
+      <h3>Check your email!</h3>
+      <p>
+        We sent your free trial link to your inbox.<br>
+        Check spam if you don't see it in 2 minutes.<br><br>
+        <strong style="color:#a78bfa">Enjoy all Pro strategies free for 7 days!</strong>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Claude AI Chatbot -->
+<button id="chat-bubble" onclick="toggleChat()">
+  💬
+  <span class="chat-badge">1</span>
+</button>
+<div id="chat-window">
+  <div id="chat-header">
+    <div class="agent-avatar">🤖</div>
+    <div class="agent-info">
+      <h4>Alex</h4>
+      <p>● Online — Options Assistant</p>
+    </div>
+    <button class="close-chat" onclick="toggleChat()">×</button>
+  </div>
+  <div id="chat-messages"></div>
+  <div id="chat-input-area">
+    <textarea id="chat-input" placeholder="Ask me about options..." rows="1" onkeypress="handleChatKey(event)"></textarea>
+    <button id="chat-send" onclick="sendChatMessage()">➤</button>
+  </div>
+</div>
+
+
+<script>
 // ===== CLAUDE AI CHATBOT =====
 let chatHistory = [];
 let chatOpen = false;
@@ -952,81 +1031,6 @@ async function sendChatMessage() {
 }
 setTimeout(() => { if (!chatOpen && chatHistory.length === 0) { toggleChat(); } }, 45000);
 // ===== END CHATBOT =====
-
 </script>
-
-
-<!-- Exit Intent Popup -->
-<div id="exit-overlay">
-  <div id="exit-popup">
-    <button class="close-btn" onclick="closeExitPopup()">&#215;</button>
-    
-    <div id="exit-form-content">
-      <div class="emoji">&#127873;</div>
-      <h2>Wait! Don't leave yet.</h2>
-      <p class="subtitle">
-        Get <strong style="color:#a78bfa">7 days FREE</strong> 
-        access to all Pro strategies before you decide.
-      </p>
-      
-      <div class="offer-box">
-        <p>&#10003; Long Call &amp; Long Put</p>
-        <p>&#10003; Bull Call &amp; Bear Put Spreads</p>
-        <p>&#10003; Strangle, Straddle &amp; Collar</p>
-        <p style="margin-top:8px">
-          <strong>$0 for 7 days. No credit card required.</strong>
-        </p>
-      </div>
-      
-      <div id="exit-email-form">
-        <input 
-          type="email" 
-          id="exit-email-input" 
-          placeholder="Enter your email address"
-          onkeypress="if(event.key==='Enter')submitExitEmail()"
-        />
-        <button id="exit-submit-btn" onclick="submitExitEmail()">
-          &#128640; Start My Free 7-Day Trial
-        </button>
-      </div>
-      
-      <p class="no-thanks" onclick="closeExitPopup()">
-        No thanks, I don't want free access
-      </p>
-    </div>
-    
-    <div id="exit-success">
-      <div class="success-icon">&#9989;</div>
-      <h3>Check your email!</h3>
-      <p>
-        We sent your free trial link to your inbox.<br>
-        Check spam if you don't see it in 2 minutes.<br><br>
-        <strong style="color:#a78bfa">Enjoy all Pro strategies free for 7 days!</strong>
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- Claude AI Chatbot -->
-<button id="chat-bubble" onclick="toggleChat()">
-  💬
-  <span class="chat-badge">1</span>
-</button>
-<div id="chat-window">
-  <div id="chat-header">
-    <div class="agent-avatar">🤖</div>
-    <div class="agent-info">
-      <h4>Alex</h4>
-      <p>● Online — Options Assistant</p>
-    </div>
-    <button class="close-chat" onclick="toggleChat()">×</button>
-  </div>
-  <div id="chat-messages"></div>
-  <div id="chat-input-area">
-    <textarea id="chat-input" placeholder="Ask me about options..." rows="1" onkeypress="handleChatKey(event)"></textarea>
-    <button id="chat-send" onclick="sendChatMessage()">➤</button>
-  </div>
-</div>
-
 </body>
 </html>
