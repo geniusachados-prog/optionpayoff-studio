@@ -356,7 +356,7 @@
   gtag('config', 'AW-18135312856');
 </script>
 <script>
-  async function subscribeToMailchimp(email) {
+  async function subscribeToBrevo(email) {
       try {
             const response = await fetch(
                     '/.netlify/functions/subscribe',
@@ -700,16 +700,15 @@ selectStrategy(selected);
 
 
 // ============ EXIT INTENT ============
-let exitShown = false;
+async function subscribeToBrevo(email) {
 let timeOnSite = 0;
 let timeTimer = setInterval(function() { timeOnSite++; }, 1000);
 
 function showExitPopup() {
-  if (exitShown) return;
+  if (exitShown) return;  exitShown = true;    document.getElementById('exit-overlay').classList.add('active');
   if (localStorage.getItem('opp_license_valid') === 'true') return;
   if (localStorage.getItem('exit_email_captured')) return;
-  exitShown = true;
-  document.getElementById('exit-overlay').classList.add('active');
+  exitShown = true;    document.getElementById('exit-overlay').classList.add('active');
 }
 
 function closeExitPopup() {
@@ -726,7 +725,7 @@ function submitExitEmail() {
   
   localStorage.setItem('exit_email_captured', 'true');
         localStorage.setItem('exit_email', email);
-            subscribeToMailchimp(email);
+            subscribeToBrevo(email);
   
   document.getElementById('exit-form-content').style.display = 'none';
   document.getElementById('exit-success').style.display = 'block';
