@@ -1,63 +1,173 @@
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-      return { statusCode: 405, body: 'Method not allowed' };
+
+    if (event.httpMethod === 'OPTIONS') {
+
+      return {
+
+              statusCode: 200,
+
+              headers: {
+
+                'Access-Control-Allow-Origin': '*',
+
+                        'Access-Control-Allow-Headers': 'Content-Type',
+
+                        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+
+              },
+
+              body: ''
+
+      };
+
+    }
+
+    if (event.httpMethod !== 'POST') {
+
+      return {
+
+              statusCode: 405,
+
+              headers: { 'Access-Control-Allow-Origin': '*' },
+
+              body: JSON.stringify({ error: 'Method not allowed' })
+
+      };
+
+    }
+
+    try {
+
+      const { email } = JSON.parse(event.body);
+
+      if (!email || !email.includes('@')) {
+
+            return {
+
+                      statusCode: 400,
+
+                      headers: { 'Access-Control-Allow-Origin': '*' },
+
+                      body: JSON.stringify({ error: 'Invalid email' })
+
+            };
+
+      }
+
+      const API_KEY = process.env.BREVO_API_KEY;
+
+      const LIST_ID = parseInt(process.env.BREVO_LIST_ID);
+
+      const response = await fetch(
+
+              'https://api.brevo.com/v3/contacts',
+
+        {
+
+                method: 'POST',
+
+                  headers: {
+
+                    'api-key': API_KEY,
+
+                              'Content-Type': 'application/json',
+
+                              'Accept': 'application/json'
+
+                  },
+
+                  body: JSON.stringify({
+
+                                                 email: email,
+
+                              listIds: [LIST_ID],
+
+                              updateEnabled: true,
+
+                              attributes: {
+
+                                SOURCE: 'exit-intent',
+
+                                            PRODUCT: 'OptionPayoff Studio'
+
+                              }
+
+                  })
+
         }
 
-          const { email } = JSON.parse(event.body);
+            );
 
-            if (!email || !email.includes('@')) {
-                return {
-                      statusCode: 400,
-                            body: JSON.stringify({ error: 'Invalid email' })
-                                };
-                                  }
+      if (response.status === 201 || response.status === 204) {
 
-                                    const API_KEY = process.env.MAILCHIMP_API_KEY;
-                                      const AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
-                                        const SERVER = process.env.MAILCHIMP_SERVER;
+            return {
 
-                                          const url = `https://${SERVER}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members`;
+                      statusCode: 200,
 
-                                            try {
-                                                const response = await fetch(url, {
-                                                      method: 'POST',
-                                                            headers: {
-                                                                    'Authorization': `Bearer ${API_KEY}`,
-                                                                            'Content-Type': 'application/json',
-                                                                                  },
-                                                                                        body: JSON.stringify({
-                                                                                                email_address: email,
-                                                                                                        status: 'subscribed',
-                                                                                                                tags: ['exit-intent', 'free-trial']
-                                                                                                                      })
-                                                                                                                          });
-                                                                                                                          
-                                                                                                                              const data = await response.json();
-                                                                                                                              
-                                                                                                                                  if (data.status === 'subscribed' || data.id) {
-                                                                                                                                        return {
-                                                                                                                                                statusCode: 200,
-                                                                                                                                                        headers: {
-                                                                                                                                                                  'Access-Control-Allow-Origin': '*',
-                                                                                                                                                                            'Content-Type': 'application/json'
-                                                                                                                                                                                    },
-                                                                                                                                                                                            body: JSON.stringify({ success: true })
-                                                                                                                                                                                                  };
-                                                                                                                                                                                                      } else {
-                                                                                                                                                                                                            return {
-                                                                                                                                                                                                                    statusCode: 400,
-                                                                                                                                                                                                                            headers: { 'Access-Control-Allow-Origin': '*' },
-                                                                                                                                                                                                                                    body: JSON.stringify({ 
-                                                                                                                                                                                                                                              success: false, 
-                                                                                                                                                                                                                                                        error: data.detail || 'Subscription failed' 
-                                                                                                                                                                                                                                                                })
-                                                                                                                                                                                                                                                                      };
-                                                                                                                                                                                                                                                                          }
-                                                                                                                                                                                                                                                                            } catch (error) {
-                                                                                                                                                                                                                                                                                return {
-                                                                                                                                                                                                                                                                                      statusCode: 500,
-                                                                                                                                                                                                                                                                                            headers: { 'Access-Control-Allow-Origin': '*' },
-                                                                                                                                                                                                                                                                                                  body: JSON.stringify({ error: error.message })
-                                                                                                                                                                                                                                                                                                      };
-                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                        };
+                      headers: {
+
+                        'Access-Control-Allow-Origin': '*',
+
+                                  'Content-Type': 'application/json'
+
+                      },
+
+                      body: JSON.stringify({ success: true })
+
+            };
+
+      }
+
+      const data = await response.json();
+
+      if (data.code === 'duplicate_parameter') {
+
+            return {
+
+                      statusCode: 200,
+
+                      headers: { 'Access-Control-Allow-Origin': '*' },
+
+                      body: JSON.stringify({ 
+
+                                                     success: true,
+
+                                  note: 'Contact already exists'
+
+                      })
+
+            };
+
+      }
+
+      return {
+
+              statusCode: 400,
+
+              headers: { 'Access-Control-Allow-Origin': '*' },
+
+              body: JSON.stringify({ 
+
+                                           success: false,
+
+                        error: data.message || 'Failed'
+
+              })
+
+      };
+
+    } catch (error) {
+
+      return {
+
+              statusCode: 500,
+
+              headers: { 'Access-Control-Allow-Origin': '*' },
+
+              body: JSON.stringify({ error: error.message })
+
+      };
+
+    }
+
+};
