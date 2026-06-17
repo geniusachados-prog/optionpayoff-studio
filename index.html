@@ -846,12 +846,14 @@ document.addEventListener('touchstart', resetMobileTimer);
 document.addEventListener('scroll', resetMobileTimer);
 resetMobileTimer();
 
-const overlayEl = document.getElementById('exit-overlay');
-if (overlayEl) {
-  overlayEl.addEventListener('click', function(e) {
-    if (e.target === this) closeExitPopup();
-  });
-}
+document.addEventListener('DOMContentLoaded', function() {
+  const overlayEl = document.getElementById('exit-overlay');
+  if (overlayEl) {
+    overlayEl.addEventListener('click', function(e) {
+      if (e.target === this) closeExitPopup();
+    });
+  }
+});
 // ============ END EXIT INTENT ============
 </script>
 
