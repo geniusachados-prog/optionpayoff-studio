@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iron Condor Calculator — Free Options Strategy Visualizer | OptionPayoff Studio</title>
+  <meta name="description" content="Free Iron Condor calculator with interactive payoff diagram. See max profit, max loss, and breakeven points instantly. No signup required." />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-S9N7JKZTWY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-S9N7JKZTWY');
+    gtag('config', 'AW-18135312856');
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #fff; }
+    header { background: #1a1a2e; padding: 20px 40px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.4rem; color: #7c3aed; }
+    .hero { text-align: center; padding: 80px 20px 60px; background: linear-gradient(135deg, #1a1a2e 0%, #0f0f0f 100%); }
+    .hero h2 { font-size: 2.5rem; margin-bottom: 20px; }
+    .hero p { font-size: 1.1rem; color: #aaa; max-width: 600px; margin: 0 auto 30px; }
+    .cta-btn { background: #7c3aed; color: #fff; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-size: 1.1rem; font-weight: 600; display: inline-block; transition: background 0.2s; }
+    .cta-btn:hover { background: #6d28d9; }
+    .content { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
+    .content h3 { font-size: 1.5rem; margin-bottom: 16px; color: #7c3aed; }
+    .content p { color: #ccc; line-height: 1.8; margin-bottom: 20px; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 40px 0; }
+    .feature { background: #1a1a2e; border: 1px solid #333; border-radius: 12px; padding: 24px; }
+    .feature h4 { color: #7c3aed; margin-bottom: 8px; }
+    .feature p { color: #aaa; font-size: 0.9rem; }
+    footer { text-align: center; padding: 40px; color: #555; border-top: 1px solid #222; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚡ OptionPayoff Studio</h1>
+    <a href="/" class="cta-btn" style="padding: 10px 24px; font-size: 0.95rem;">Try Free →</a>
+  </header>
+  <div class="hero">
+    <h2>Iron Condor Calculator</h2>
+    <p>Visualize your Iron Condor payoff diagram instantly. See max profit, max loss, and exact breakeven points before you place the trade.</p>
+    <a href="/" class="cta-btn">Try Free — No Signup Required</a>
+  </div>
+  <div class="content">
+    <h3>What is an Iron Condor?</h3>
+    <p>An Iron Condor is a neutral options strategy where you simultaneously sell an out-of-the-money call spread and an out-of-the-money put spread on the same underlying asset with the same expiration date. It profits when the underlying stays within a defined range.</p>
+    <h3>Iron Condor Payoff Structure</h3>
+    <p>The strategy consists of 4 legs: buy a lower put (Long Put Strike), sell a higher put (Short Put Strike), sell a lower call (Short Call Strike), and buy a higher call (Long Call Strike). Your maximum profit is the net credit received, and your maximum loss is the spread width minus the credit.</p>
+    <div class="features">
+      <div class="feature">
+        <h4>📈 Max Profit</h4>
+        <p>Net premium received when the underlying expires between the two short strikes.</p>
+      </div>
+      <div class="feature">
+        <h4>📉 Max Loss</h4>
+        <p>Spread width minus net credit, occurring if the underlying moves beyond either wing.</p>
+      </div>
+      <div class="feature">
+        <h4>⚖️ Breakeven Points</h4>
+        <p>Two breakeven prices: Short Put Strike minus credit and Short Call Strike plus credit.</p>
+      </div>
+      <div class="feature">
+        <h4>🎯 Best For</h4>
+        <p>Sideways markets with low volatility expectations. Generates income in stable conditions.</p>
+      </div>
+    </div>
+    <h3>Try the Free Iron Condor Calculator</h3>
+    <p>OptionPayoff Studio provides a free, interactive Iron Condor calculator with real-time payoff diagrams. Adjust strike prices and premiums to see how the payoff changes instantly.</p>
+    <div style="text-align: center; margin: 40px 0;">
+      <a href="/" class="cta-btn">Open Free Calculator →</a>
+    </div>
+  </div>
+  <footer>
+    <p>OptionPayoff Studio • Free Options Strategy Visualizer • Educational tool only, not investment advice.</p>
+  </footer>
+</body>
+</html>
