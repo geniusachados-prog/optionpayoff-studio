@@ -1,3 +1,7 @@
 [build]
   publish = "."
 # Deploy trigger
+
+
+[functions]
+  directory = "netlify/functions"
