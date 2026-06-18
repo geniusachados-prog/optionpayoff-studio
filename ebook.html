@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Options Trading Visual Guide — Free 30-Day Pro Trial Included | OptionPayoff Studio</title>
+  <meta name="description" content="The complete options trading guide with 30+ worked examples, every strategy visualized, and 30 days of free Pro access to OptionPayoff Studio. $17 one-time.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f0f1a;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+    a { color: #a78bfa; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    nav {
+      background: #1e1b4b;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #4c1d95;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav .logo { font-size: 1.1rem; font-weight: 700; color: #a78bfa; }
+    nav .nav-cta {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: white;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f0f1a 100%);
+      padding: 80px 24px;
+      text-align: center;
+      border-bottom: 1px solid #2d1b69;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: #4c1d95;
+      color: #c4b5fd;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      border: 1px solid #7c3aed;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero h1 span { color: #a78bfa; }
+    .hero .subtitle {
+      font-size: 1.15rem;
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+    .hero .price-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      background: #1e1b4b;
+      border: 2px solid #7c3aed;
+      border-radius: 16px;
+      padding: 20px 32px;
+      margin-bottom: 24px;
+    }
+    .hero .price { font-size: 2.5rem; font-weight: 800; color: white; }
+    .hero .price-detail { text-align: left; }
+    .hero .price-detail .main { font-size: 0.95rem; color: #c4b5fd; font-weight: 600; }
+    .hero .price-detail .sub { font-size: 0.85rem; color: #64748b; }
+    .hero .btn-buy {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: white;
+      padding: 18px 48px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 24px rgba(124,58,237,0.4);
+      display: block;
+      max-width: 380px;
+      margin: 0 auto 12px;
+      text-align: center;
+    }
+    .hero .btn-buy:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(124,58,237,0.6); text-decoration: none; }
+    .hero .guarantee { font-size: 0.85rem; color: #64748b; }
+    .section { max-width: 900px; margin: 0 auto; padding: 72px 24px; }
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #7c3aed;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .section h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; color: white; margin-bottom: 16px; line-height: 1.3; }
+    .section .intro { font-size: 1.05rem; color: #94a3b8; margin-bottom: 40px; max-width: 620px; }
+    .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+    @media (max-width: 640px) { .book-grid { grid-template-columns: 1fr; } }
+    .chapter-card { background: #1e1b4b; border: 1px solid #4c1d95; border-radius: 12px; padding: 20px; }
+    .chapter-card .ch-label { font-size: 0.75rem; font-weight: 700; color: #7c3aed; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .chapter-card h3 { font-size: 1rem; font-weight: 700; color: white; margin-bottom: 6px; }
+    .chapter-card p { font-size: 0.875rem; color: #64748b; line-height: 1.5; }
+    .bonus-banner {
+      background: linear-gradient(135deg, #065f46, #064e3b);
+      border: 2px solid #10b981;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 40px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    @media (max-width: 640px) { .bonus-banner { grid-template-columns: 1fr; } }
+    .bonus-banner h3 { font-size: 1.3rem; font-weight: 800; color: white; margin-bottom: 8px; }
+    .bonus-banner p { font-size: 0.95rem; color: #6ee7b7; line-height: 1.6; }
+    .bonus-badge { background: #10b981; color: white; padding: 8px 18px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; white-space: nowrap; text-align: center; }
+    .bonus-badge .price-strike { font-size: 0.8rem; text-decoration: line-through; opacity: 0.7; }
+    .inside-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 40px; }
+    .inside-item { display: flex; gap: 12px; align-items: flex-start; background: #1e1b4b; border: 1px solid #2d1b69; border-radius: 10px; padding: 14px; }
+    .inside-item .icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+    .inside-item .text strong { display: block; font-size: 0.95rem; color: white; margin-bottom: 2px; }
+    .inside-item .text span { font-size: 0.85rem; color: #64748b; }
+    .strategies-section { background: #1a1033; border-top: 1px solid #2d1b69; border-bottom: 1px solid #2d1b69; padding: 72px 24px; }
+    .strategies-inner { max-width: 900px; margin: 0 auto; }
+    .strategy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-top: 32px; }
+    .strategy-chip { background: #1e1b4b; border: 1px solid #4c1d95; border-radius: 8px; padding: 12px; text-align: center; }
+    .strategy-chip .name { font-size: 0.9rem; font-weight: 600; color: #e2e8f0; display: block; margin-bottom: 4px; }
+    .strategy-chip .tier { font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+    .tier-free { background: #065f46; color: #6ee7b7; }
+    .tier-pro { background: #4c1d95; color: #c4b5fd; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-top: 32px; }
+    .step { text-align: center; }
+    .step .num { width: 48px; height: 48px; background: linear-gradient(135deg, #7c3aed, #4f46e5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; color: white; margin: 0 auto 12px; }
+    .step h4 { font-size: 0.95rem; font-weight: 700; color: white; margin-bottom: 6px; }
+    .step p { font-size: 0.85rem; color: #64748b; line-height: 1.5; }
+    .divider { border: none; border-top: 1px solid #2d1b69; }
+    .final-cta { background: linear-gradient(135deg, #1e1b4b, #2d1b69); border-top: 1px solid #4c1d95; padding: 80px 24px; text-align: center; }
+    .final-cta h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: white; margin-bottom: 16px; }
+    .final-cta p { font-size: 1.05rem; color: #94a3b8; max-width: 500px; margin: 0 auto 32px; }
+    .final-cta .btn-buy { display: inline-block; background: linear-gradient(135deg, #7c3aed, #4f46e5); color: white; padding: 18px 48px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; text-decoration: none; box-shadow: 0 4px 24px rgba(124,58,237,0.4); transition: all 0.2s; }
+    .final-cta .btn-buy:hover { transform: translateY(-2px); text-decoration: none; }
+    .final-cta .sub { font-size: 0.85rem; color: #475569; margin-top: 12px; }
+    footer { background: #0a0a14; padding: 24px; text-align: center; font-size: 0.85rem; color: #475569; border-top: 1px solid #1e1b4b; }
+    footer a { color: #7c3aed; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">&#9889; OptionPayoff Studio</a>
+  <a href="https://achados63.gumroad.com/l/ufuea" class="nav-cta" target="_blank">Get the Guide &#8212; $17</a>
+</nav>
+<div class="hero">
+  <div class="badge">&#128218; 43 Pages &middot; 30+ Worked Examples &middot; Free Pro Trial</div>
+  <h1>The Options Trading Guide<br>That <span>Shows You the Numbers</span></h1>
+  <p class="subtitle">Learn every major options strategy with visual payoff diagrams, real worked examples, and 30 days of free Pro access to OptionPayoff Studio included.</p>
+  <div class="price-box">
+    <div class="price">$17</div>
+    <div class="price-detail">
+      <div class="main">One-time payment</div>
+      <div class="sub">Instant PDF delivery + license key</div>
+    </div>
+  </div>
+  <a href="https://achados63.gumroad.com/l/ufuea" class="btn-buy" target="_blank">Get the Guide + 30 Days Pro Free &#8594;</a>
+  <p class="guarantee">Instant delivery &middot; PDF + license key &middot; No subscription required</p>
+</div>
+<div class="section">
+  <div class="section-label">Inside the guide</div>
+  <h2>43 pages. Everything you need.<br>Nothing you don't.</h2>
+  <p class="intro">Most options books are theoretical. This one shows you the numbers &#8212; worked examples with real stocks, real prices, and every formula you need at a glance.</p>
+  <div class="book-grid">
+    <div class="chapter-card">
+      <div class="ch-label">Introduction</div>
+      <h3>Why Most Traders Lose</h3>
+      <p>The one habit that separates profitable traders &#8212; and how to build it from day one.</p>
+    </div>
+    <div class="chapter-card">
+      <div class="ch-label">Chapter 1</div>
+      <h3>Options 101 &#8212; The Foundation</h3>
+      <p>Calls, puts, strikes, premiums, ITM/OTM explained with analogies that actually stick.</p>
+    </div>
+    <div class="chapter-card">
+      <div class="ch-label">Chapter 2</div>
+      <h3>Reading Payoff Diagrams</h3>
+      <p>How to read any diagram in 3 seconds. The 4 shapes and what they tell you instantly.</p>
+    </div>
+    <div class="chapter-card">
+      <div class="ch-label">Chapter 3</div>
+      <h3>The Greeks &#8212; Made Simple</h3>
+      <p>Delta, Theta, Vega, Gamma in plain English. Including the IV crush trap that kills beginners.</p>
+    </div>
+    <div class="chapter-card">
+      <div class="ch-label">Chapter 4</div>
+      <h3>3 Safest Strategies (Free)</h3>
+      <p>Iron Condor, Covered Call, Cash-Secured Put &#8212; each with a full worked example.</p>
+    </div>
+    <div class="chapter-card">
+      <div class="ch-label">Chapter 5</div>
+      <h3>7 Advanced Strategies (Pro)</h3>
+      <p>Long Call, Spreads, Straddle, Strangle, Collar &#8212; every one with real numbers.</p>
+    </div>
+    <div class="chapter-card">
+      <div class="ch-label">Chapter 6</div>
+      <h3>The 7 Most Expensive Mistakes</h3>
+      <p>Every one is avoidable. Every one has cost real money. Read these before you trade.</p>
+    </div>
+    <div class="chapter-card">
+      <div class="ch-label">Bonus</div>
+      <h3>Quick Reference Card + Glossary</h3>
+      <p>All 10 strategies at a glance. Every formula. Every term. Keep it nearby.</p>
+    </div>
+  </div>
+  <div class="bonus-banner">
+    <div>
+      <h3>BONUS: 30 Days of Pro Access Included</h3>
+      <p>Every strategy you learn in the guide, you can visualize instantly with your own numbers. Your Pro license key is delivered with the ebook. Activate at <strong>optionpayoffstudio.com</strong> &#8212; takes 60 seconds.</p>
+    </div>
+    <div>
+      <div class="bonus-badge">
+        <div class="price-strike">$9 value</div>
+        FREE with guide
+      </div>
+    </div>
+  </div>
+  <div class="inside-grid">
+    <div class="inside-item">
+      <div class="icon">&#128202;</div>
+      <div class="text"><strong>30+ Worked Examples</strong><span>Real stocks, real prices, real numbers at every step</span></div>
+    </div>
+    <div class="inside-item">
+      <div class="icon">&#128208;</div>
+      <div class="text"><strong>Every Formula You Need</strong><span>Max profit, max loss, breakeven &#8212; all explained simply</span></div>
+    </div>
+    <div class="inside-item">
+      <div class="icon">&#128200;</div>
+      <div class="text"><strong>Visual Payoff Diagrams</strong><span>ASCII charts for every strategy + how to read them</span></div>
+    </div>
+    <div class="inside-item">
+      <div class="icon">&#129504;</div>
+      <div class="text"><strong>The Greeks Explained</strong><span>Delta, Theta, Vega, Gamma &#8212; no math required</span></div>
+    </div>
+    <div class="inside-item">
+      <div class="icon">&#9989;</div>
+      <div class="text"><strong>Pre-Trade Checklist</strong><span>5-minute checklist to run before every single trade</span></div>
+    </div>
+    <div class="inside-item">
+      <div class="icon">&#128214;</div>
+      <div class="text"><strong>Full Glossary</strong><span>30 terms defined clearly &#8212; your permanent reference</span></div>
+    </div>
+  </div>
+</div>
+<div class="strategies-section">
+  <div class="strategies-inner">
+    <div class="section-label">All 10 strategies covered</div>
+    <h2 style="font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;color:white;margin-bottom:12px;">Every Strategy. Explained. Visualized.</h2>
+    <p style="color:#94a3b8;font-size:1.05rem;max-width:560px;">The guide covers all 10 strategies available on OptionPayoff Studio &#8212; with your 30-day Pro trial, you can visualize each one with your own numbers.</p>
+    <div class="strategy-grid">
+      <div class="strategy-chip"><span class="name">Iron Condor</span><span class="tier tier-free">FREE</span></div>
+      <div class="strategy-chip"><span class="name">Covered Call</span><span class="tier tier-free">FREE</span></div>
+      <div class="strategy-chip"><span class="name">Cash-Secured Put</span><span class="tier tier-free">FREE</span></div>
+      <div class="strategy-chip"><span class="name">Long Call</span><span class="tier tier-pro">PRO</span></div>
+      <div class="strategy-chip"><span class="name">Long Put</span><span class="tier tier-pro">PRO</span></div>
+      <div class="strategy-chip"><span class="name">Bull Call Spread</span><span class="tier tier-pro">PRO</span></div>
+      <div class="strategy-chip"><span class="name">Bear Put Spread</span><span class="tier tier-pro">PRO</span></div>
+      <div class="strategy-chip"><span class="name">Strangle</span><span class="tier tier-pro">PRO</span></div>
+      <div class="strategy-chip"><span class="name">Straddle</span><span class="tier tier-pro">PRO</span></div>
+      <div class="strategy-chip"><span class="name">Collar</span><span class="tier tier-pro">PRO</span></div>
+    </div>
+  </div>
+</div>
+<div class="section">
+  <div class="section-label">How it works</div>
+  <h2>Buy once. Learn forever.<br>30 days Pro included.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="num">1</div>
+      <h4>Buy the Guide ($17)</h4>
+      <p>Instant PDF delivery to your inbox. One-time payment, no subscription.</p>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <h4>Get Your License Key</h4>
+      <p>Your 30-day Pro key is included in the delivery email, shown above the PDF.</p>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <h4>Activate at the Studio</h4>
+      <p>Go to optionpayoffstudio.com, click "Already Pro? Activate" and paste your key.</p>
+    </div>
+    <div class="step">
+      <div class="num">4</div>
+      <h4>Read + Visualize Together</h4>
+      <p>Study a strategy in the guide. Open the Studio and visualize it with your numbers.</p>
+    </div>
+  </div>
+</div>
+<hr class="divider">
+<div class="final-cta">
+  <h2>Start trading with<br>clarity and confidence.</h2>
+  <p>43 pages. 30+ examples. 10 strategies. 30 days Pro included. One price, forever.</p>
+  <a href="https://achados63.gumroad.com/l/ufuea" class="btn-buy" target="_blank">Get the Guide + 30 Days Pro &#8212; $17 &#8594;</a>
+  <p class="sub">Instant PDF delivery &middot; License key included &middot; After 30 days: $9/month (cancel anytime)</p>
+</div>
+<footer>
+  <p><a href="/">&#9889; OptionPayoff Studio</a> &middot; optionpayoffstudio.com &middot; Educational tool only &#8212; not investment advice.</p>
+</footer>
+</body>
+</html>
