@@ -743,37 +743,82 @@ document.getElementById('btnDoActivate').onclick = async () => {
   const key = document.getElementById('licenseInput').value.trim();
   const err = document.getElementById('activationError');
   const btn = document.getElementById('btnDoActivate');
+
   if (!key) return;
+
   err.style.display = 'none';
   btn.textContent = 'Activating...';
   btn.disabled = true;
-  try {
+
+  const PRO_ID = 'Qopg-Yw6werIezmb7aF2AA==';
+  const EBOOK_ID = 'ufuea';
+
+  async function verify(productId) {
     const res = await fetch('https://api.gumroad.com/v2/licenses/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
-        product_permalink: 'jgtjpg',
+        product_id: productId,
         license_key: key,
-        increment_uses_count: 'false',
-        product_id: 'Qopg-Yw6werIezmb7aF2AA=='
+        increment_uses_count: 'false'
       })
     });
-    const data = await res.json();
+    return res.json();
+  }
+
+  try {
+    let data = await verify(PRO_ID);
+
     if (data.success) {
       isPro = true;
       localStorage.setItem('opp_license_valid', 'true');
       localStorage.setItem('opp_license_key', key);
+      localStorage.removeItem('opp_ebook_activated');
       document.getElementById('activationPanel').style.display = 'none';
       updateProUI();
       selectStrategy(selected);
+      btn.textContent = 'Activate License';
+      btn.disabled = false;
+      return;
+    }
+
+    data = await verify(EBOOK_ID);
+
+    if (data.success) {
+      const activatedAt = localStorage.getItem('opp_ebook_activated');
+      const now = Date.now();
+      let start = activatedAt ? parseInt(activatedAt) : now;
+
+      if (!activatedAt) {
+        localStorage.setItem('opp_ebook_activated', String(now));
+        start = now;
+      }
+
+      const daysUsed = (now - start) / (1000 * 60 * 60 * 24);
+
+      if (daysUsed <= 30) {
+        isPro = true;
+        localStorage.setItem('opp_license_valid', 'true');
+        localStorage.setItem('opp_license_key', key);
+        document.getElementById('activationPanel').style.display = 'none';
+        updateProUI();
+        selectStrategy(selected);
+        btn.textContent = 'Activate License';
+        btn.disabled = false;
+        return;
+      } else {
+        err.textContent = 'Your 30-day ebook trial has ended. Continue Pro for $9/month.';
+        err.style.display = 'block';
+      }
     } else {
-      err.textContent = data.message || 'Invalid license key. Check your Gumroad email receipt.';
+      err.textContent = (data.message) ? data.message : 'Invalid license key. Check your email receipt.';
       err.style.display = 'block';
     }
   } catch (e) {
     err.textContent = 'Connection error. Please try again.';
     err.style.display = 'block';
   }
+
   btn.textContent = 'Activate License';
   btn.disabled = false;
 };
